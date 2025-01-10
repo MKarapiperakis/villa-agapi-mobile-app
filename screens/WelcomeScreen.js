@@ -34,6 +34,7 @@ import { showMessage, hideMessage } from "react-native-flash-message";
 
 function WelcomeScreen() {
   const [loading, setLoading] = useState(true);
+  const [userType, setUserType] = useState(true);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -62,6 +63,17 @@ function WelcomeScreen() {
   const [tempphone, settempPhone] = useState("");
   const [tempselectedCountryName, settempSelectedCountryName] = useState("");
   const [role, setRole] = useState("");
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerStyle: {
+        backgroundColor: mode === "light" ? "#FFFAFA" : "#121212",
+        elevation: 0,
+        shadowOpacity: 0,
+      },
+      headerTintColor: mode === "light" ? "#000000" : "#ffffff", // Text color
+    });
+  }, [navigation, mode]);
   
 
   const toggleCircleVisibility = () => {
@@ -108,7 +120,7 @@ function WelcomeScreen() {
         useNativeDriver: true,
       }),
     ]).start(() => {
-      navigation.navigate("chat");
+      navigation.navigate("Chat");
     });
   };
 
@@ -144,6 +156,7 @@ function WelcomeScreen() {
         setMinDate(response.arrival);
         setMaxDate(response.departure);
         setCleaningDates(response.cleaningprogram);
+        setUserType(response.role)
 
         const minDate = moment(response.arrival, "YYYY-MM-DD HH:mm:ss");
         const maxDate = moment(response.departure, "YYYY-MM-DD HH:mm:ss");
@@ -215,7 +228,7 @@ function WelcomeScreen() {
           message: "User has been updated successfully",
           type: "success",
           icon: (props) => (
-            <Ionicons name="ios-checkmark-circle" size={18} color="white" />
+            <Ionicons name="checkmark-circle-outline" size={18} color="white" style={styles.flash} />
           ),
         });
       } else {
@@ -223,7 +236,7 @@ function WelcomeScreen() {
           message: "Error updating user information, please try again later",
           type: "danger",
           icon: (props) => (
-            <MaterialIcons name="error" size={18} color="white" />
+            <MaterialIcons name="error" size={18} color="white" style={styles.flash}/>
           ),
         });
       }
@@ -345,7 +358,7 @@ function WelcomeScreen() {
           )}
 
           {/* CHATBOT */}
-          {isCircleVisible && !loading && (
+          {isCircleVisible && !loading && userType === 'primeVisitor' && (
             <TouchableOpacity style={styles.circle} onPress={handlePress}>
               <Animated.Image
                 source={require("../assets/avatar.jpg")}
@@ -358,7 +371,7 @@ function WelcomeScreen() {
           )}
 
           {/* CHATBOT COLLAPSE */}
-          {!loading && (
+          {!loading && userType === 'primeVisitor' && (
             <TouchableOpacity
               style={styles.toggleButton}
               onPress={toggleCircleVisibility}
@@ -424,7 +437,7 @@ function WelcomeScreen() {
                   <View
                     style={[
                       styles.inputContainer,
-                      { marginBottom: isEdit ? 0 : 10 },
+                      { marginBottom: isEdit ? 0 : 20 },
                     ]}
                   >
                     {!isEdit && (
@@ -845,7 +858,7 @@ const styles = StyleSheet.create({
     color: "black",
   },
   inputText: {
-    fontSize: 22,
+    fontSize: 21,
     borderBottomColor: "black",
     borderBottomWidth: 2,
     color: "black",
@@ -887,12 +900,11 @@ const styles = StyleSheet.create({
     borderColor: "#D3D3D3",
     marginHorizontal: 10,
     padding: 5,
-    marginBottom: 20,
   },
   label: {
     fontFamily: "poppins",
     color: "#000000",
-    fontSize: 23,
+    fontSize: 21,
     marginVertical: 8,
     textAlign: "center",
   },
@@ -979,5 +991,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flex: 1,
   },
-  content: {},
+  flash: {
+    marginRight: 2
+  }
 });

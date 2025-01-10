@@ -2,7 +2,7 @@ import { useState } from "react";
 import { StyleSheet, View, Platform } from "react-native";
 
 import Button from "../ui/Button";
-import Input from "./Input";
+import { Input } from "react-native-elements";
 
 function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
   const [enteredUsername, setUserName] = useState("");
@@ -30,17 +30,29 @@ function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
     <View style={styles.form}>
       <View>
         <Input
-          label="Username"
-          onUpdateValue={updateInputValueHandler.bind(this, "username")}
           value={enteredUsername}
-          keyboardType="default"
+          label="Username"
+          labelStyle={styles.label}
+          autoCapitalize="none"
+          autoComplete="off"
+          onChangeText={(text) => setUserName(text)}
+          enterKeyHint="next"
+          onSubmitEditing={() => {
+            this.secondTextInput.focus();
+          }}
         />
-
         <Input
           label="Password"
-          onUpdateValue={updateInputValueHandler.bind(this, "password")}
-          secure
+          labelStyle={styles.label}
+          autoCapitalize="none"
+          onChangeText={(text) => setEnteredPassword(text)}
+          secureTextEntry
           value={enteredPassword}
+          ref={(input) => {
+            this.secondTextInput = input;
+          }}
+          enterKeyHint="done"
+          onSubmitEditing={submitHandler}
         />
 
         <View style={styles.buttons}>
@@ -56,5 +68,8 @@ export default AuthForm;
 const styles = StyleSheet.create({
   buttons: {
     marginTop: 12,
+  },
+  label: {
+    color: "#000",
   },
 });

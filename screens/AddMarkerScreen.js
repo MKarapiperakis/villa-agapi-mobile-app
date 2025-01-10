@@ -6,20 +6,22 @@ import {
   Pressable,
   Text,
   FlatList,
+  Platform,
 } from "react-native";
 import { AuthContext } from "../store/auth-context";
 import { getAddress, calculateDistance } from "../util/location";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import * as Progress from "react-native-progress";
 import { Input, Button } from "react-native-elements";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useNavigation } from "@react-navigation/native";
 import { MarkerCreateRequest } from "../api/MarkerCreateRequest";
 import i18n from "../translations/i18n";
 import { showMessage, hideMessage } from "react-native-flash-message";
 import { Picker } from "@react-native-picker/picker";
-import MapView, { Marker } from "react-native-maps";
+import { Marker } from "react-native-maps";
 import LoadingOverlay from "../components/ui/LoadingOverlay";
+import MapV from "react-native-map-clustering";
+
 function AddMarkerScreen() {
   const authCtx = useContext(AuthContext);
   const [mode, setMode] = useState("");
@@ -42,8 +44,18 @@ function AddMarkerScreen() {
 
   i18n.locale = locale;
 
-
   const navigation = useNavigation();
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerStyle: {
+        backgroundColor: mode === "light" ? "#FFFAFA" : "#121212",
+        elevation: 0,
+        shadowOpacity: 0,
+      },
+      headerTintColor: mode === "light" ? "#000000" : "#ffffff",
+    });
+  }, [navigation, mode]);
   let progress = getProgress();
 
   function getProgress() {
@@ -68,7 +80,6 @@ function AddMarkerScreen() {
     setInputWord(""); // Clear the input after adding a keyword
 
     setIsAddKeyWordDisabled(true);
-    console.log(isAddKeyWordDisabled);
   };
 
   const removeKeyWord = (index) => {
@@ -76,8 +87,6 @@ function AddMarkerScreen() {
     keyWordsArray.splice(index, 1); // Remove the keyword at the specified index
     setKeyWords(keyWordsArray);
     setIsAddKeyWordDisabled(true);
-
-    console.log(isAddKeyWordDisabled);
   };
 
   const getIcon = () => {
@@ -140,14 +149,17 @@ function AddMarkerScreen() {
         icon
       );
 
-      console.log(response);
-
       if (response == 201) {
         showMessage({
           message: "Marker has been created successfully",
           type: "success",
           icon: () => (
-            <Ionicons name="ios-checkmark-circle" size={18} color="white" />
+            <Ionicons
+              name="checkmark-circle-outline"
+              size={18}
+              color="white"
+              style={styles.flash}
+            />
           ),
         });
         navigation.navigate("Profile");
@@ -155,7 +167,14 @@ function AddMarkerScreen() {
         showMessage({
           message: "Error creating marker, please try again later",
           type: "danger",
-          icon: () => <MaterialIcons name="error" size={18} color="white" />,
+          icon: () => (
+            <MaterialIcons
+              name="error"
+              size={18}
+              color="white"
+              style={styles.flash}
+            />
+          ),
         });
       }
     } catch (error) {}
@@ -174,6 +193,13 @@ function AddMarkerScreen() {
   useEffect(() => {
     setMode(authCtx.currentMode);
   }, [authCtx.currentMode]);
+
+  const INITIAL_REGION = {
+    latitude: 35.26335507678177,
+    longitude: 25.238502809890747,
+    latitudeDelta: 0.6,
+    longitudeDelta: 0.6,
+  };
 
   return (
     <KeyboardAvoidingView
@@ -194,7 +220,7 @@ function AddMarkerScreen() {
             },
           ]}
         >
-          <View style={styles.progressBarContainer}>
+          <View>
             <Progress.Bar
               progress={progress}
               width={130}
@@ -272,7 +298,6 @@ function AddMarkerScreen() {
                     {
                       color:
                         mode === "light" ? "#000000" : "rgba(245, 245, 245, 1)",
-                        
                     },
                   ]}
                 >
@@ -592,37 +617,60 @@ function AddMarkerScreen() {
           {currentStep == 3 && !isLoading && (
             <View>
               <View style={styles.row}>
-                <MapView
-                  style={styles.map}
-                  provider="google"
-                  showsCompass={true}
-                  showsTraffic={true}
-                  showsBuildings={false}
-                  showsIndoors={true}
-                  minZoomLevel={0}
-                  maxZoomLevel={20}
-                  // zoomControlEnabled={true}
-
-                  rotateEnabled={true}
-                  scrollEnabled={true}
-                  loadingEnabled={true}
-                  initialRegion={{
-                    latitude: 35.26335507678177,
-                    longitude: 25.238502809890747,
-                    latitudeDelta: 0.6,
-                    longitudeDelta: 0.6,
-                  }}
-                >
-                  <Marker
-                    draggable={true}
-                    coordinate={pin}
-                    onDragEnd={(e) => {
-                      moveMarker(e.nativeEvent.coordinate);
-                    }}
+                {Platform.OS === "android" && (
+                  <MapV
+                    initialRegion={INITIAL_REGION}
+                    style={styles.map}
+                    //provider={Platform.OS === "android" ? "google" : ""}
+                    provider="google"
+                    showsCompass={true}
+                    showsTraffic={true}
+                    showsBuildings={false}
+                    showsIndoors={true}
+                    zoomControlEnabled={false}
+                    minZoomLevel={0}
+                    maxZoomLevel={20}
+                    rotateEnabled={true}
+                    scrollEnabled={true}
+                    loadingEnabled={true}
                   >
-                    <Ionicons name={"location"} size={31} color="#4169E1" />
-                  </Marker>
-                </MapView>
+                    <Marker
+                      draggable={true}
+                      coordinate={pin}
+                      onDragEnd={(e) => {
+                        moveMarker(e.nativeEvent.coordinate);
+                      }}
+                    >
+                      <Ionicons name={"location"} size={31} color="#4169E1" />
+                    </Marker>
+                  </MapV>
+                )}
+                {Platform.OS === "ios" && (
+                  <MapV
+                    initialRegion={INITIAL_REGION}
+                    style={styles.map}
+                    showsCompass={true}
+                    showsTraffic={true}
+                    showsBuildings={false}
+                    showsIndoors={true}
+                    zoomControlEnabled={false}
+                    minZoomLevel={0}
+                    maxZoomLevel={20}
+                    rotateEnabled={true}
+                    scrollEnabled={true}
+                    loadingEnabled={true}
+                  >
+                    <Marker
+                      draggable={true}
+                      coordinate={pin}
+                      onDragEnd={(e) => {
+                        moveMarker(e.nativeEvent.coordinate);
+                      }}
+                    >
+                      <Ionicons name={"location"} size={31} color="#4169E1" />
+                    </Marker>
+                  </MapV>
+                )}
               </View>
               {markerAddress != "" && (
                 <View style={styles.row}>
@@ -682,7 +730,7 @@ function AddMarkerScreen() {
 
           {currentStep == 3 && isLoading && (
             <LoadingOverlay
-              backgroundColor={mode === "light" ? "#FFFAFA" : "#121212"}
+              backgroundColor={mode === "light" ? "#FFFAFA" : "#352A2A"}
             />
           )}
 
@@ -805,5 +853,8 @@ const styles = StyleSheet.create({
   map: {
     minHeight: 250,
     minWidth: "100%",
+  },
+  flash: {
+    marginRight: 2,
   },
 });

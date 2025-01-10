@@ -1,4 +1,6 @@
 import { host } from "../constants/host";
+import { basic_auth } from "../constants/auth";
+
 export async function dialogFlowRequest(input) {
   const url = `${host}/data/api/dialogFlow`;
 
@@ -10,6 +12,7 @@ export async function dialogFlowRequest(input) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: "Basic " + basic_auth
     },
     body: JSON.stringify(data),
   };

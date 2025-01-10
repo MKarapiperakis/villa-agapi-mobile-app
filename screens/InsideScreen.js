@@ -8,7 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import { useContext, useEffect, useState } from "react";
-
+import { useNavigation } from "@react-navigation/native";
 import { getInsideSources } from "../constants/ImageSources";
 import insideImage from "../models/insideImage";
 import InsideImageComponent from "../components/InsideImageComponent";
@@ -21,6 +21,18 @@ const { height, width } = Dimensions.get("window");
 function InsideScreen() {
   const [mode, setMode] = useState("");
   const authCtx = useContext(AuthContext);
+
+  const nav = useNavigation();
+  useEffect(() => {
+    nav.setOptions({
+      headerStyle: {
+        backgroundColor: mode === "light" ? "#FFFAFA" : "#121212",
+        elevation: 0,
+        shadowOpacity: 0,
+      },
+      headerTintColor: mode === "light" ? "#000000" : "#ffffff", // Text color
+    });
+  }, [nav, mode]);
 
   useEffect(() => {
     setMode(authCtx.currentMode);

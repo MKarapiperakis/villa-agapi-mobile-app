@@ -6,7 +6,7 @@ import { getAddress, calculateDistance } from "../util/location";
 import { getMarkerSources } from "../constants/ImageSources";
 import i18n from "../translations/i18n";
 import { AuthContext } from "../store/auth-context";
-
+import { useNavigation } from "@react-navigation/native";
 function MarkerScreen({ route }) {
   const { id } = route.params;
   const [latitude, setLatitude] = useState("");
@@ -31,6 +31,18 @@ function MarkerScreen({ route }) {
   };
   const [mode, setMode] = useState("");
   const authCtx = useContext(AuthContext);
+
+  const navigation = useNavigation();
+  useEffect(() => {
+    navigation.setOptions({
+      headerStyle: {
+        backgroundColor: mode === "light" ? "#FFFAFA" : "#121212",
+        elevation: 0,
+        shadowOpacity: 0,
+      },
+      headerTintColor: mode === "light" ? "#000000" : "#ffffff", // Text color
+    });
+  }, [navigation, mode]);
 
   const getMarker = async () => {
     try {

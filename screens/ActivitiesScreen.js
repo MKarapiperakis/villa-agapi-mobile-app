@@ -11,12 +11,24 @@ import {
 } from "react-native";
 import { AuthContext } from "../store/auth-context";
 import i18n from "../translations/i18n";
-
+import { useNavigation } from "@react-navigation/native";
 const ActivitiesScreen = () => {
   const [mode, setMode] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const scrollViewRef = useRef(null);
   const width = Dimensions.get("window").width;
+
+  const nav = useNavigation();
+  useEffect(() => {
+    nav.setOptions({
+      headerStyle: {
+        backgroundColor: mode === "light" ? "#FFFAFA" : "#121212",
+        elevation: 0,
+        shadowOpacity: 0,
+      },
+      headerTintColor: mode === "light" ? "#000000" : "#ffffff", // Text color
+    });
+  }, [nav, mode]);
 
   const data = [
     { id: "1", image: require("../assets/images/activities/activity1.jpg") },
@@ -135,7 +147,7 @@ const ActivitiesScreen = () => {
           </View>
         ))}
       </ScrollView>
-      <View style={styles.pagination}>
+      {/* <View style={styles.pagination}>
               <Pressable
                 onPress={goToFirstPage}
                 style={[
@@ -214,7 +226,7 @@ const ActivitiesScreen = () => {
                   {">>"}
                 </Text>
               </Pressable>
-            </View>
+            </View> */}
     </View>
   );
 };

@@ -8,7 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import { useContext, useEffect, useState } from "react";
-
+import { useNavigation } from "@react-navigation/native";
 import { getOutsideSources } from "../constants/ImageSources";
 import outsideImage from "../models/outsideImage";
 import OutsideImageComponent from "../components/OutsideImageComponent";
@@ -16,9 +16,21 @@ import Benefit from "../models/benefit";
 import BenefitsComponent from "../components/BenefitsComponent";
 import { AuthContext } from "../store/auth-context";
 
-function InsideScreen() {
+function OutsideScreen() {
   const [mode, setMode] = useState("");
   const authCtx = useContext(AuthContext);
+
+  const nav = useNavigation();
+  useEffect(() => {
+    nav.setOptions({
+      headerStyle: {
+        backgroundColor: mode === "light" ? "#FFFAFA" : "#121212",
+        elevation: 0,
+        shadowOpacity: 0,
+      },
+      headerTintColor: mode === "light" ? "#000000" : "#ffffff", // Text color
+    });
+  }, [nav, mode]);
 
   useEffect(() => {
     setMode(authCtx.currentMode);
@@ -97,7 +109,7 @@ function InsideScreen() {
   );
 }
 
-export default InsideScreen;
+export default OutsideScreen;
 
 const styles = StyleSheet.create({
   rootContainer: {

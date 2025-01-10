@@ -6,6 +6,7 @@ import {
   Pressable,
   Text,
   Dimensions,
+  Platform,
 } from "react-native";
 import { AuthContext } from "../store/auth-context";
 
@@ -47,6 +48,17 @@ function AddUserScreen() {
 
   i18n.locale = locale;
   const navigation = useNavigation();
+  useEffect(() => {
+    navigation.setOptions({
+      headerStyle: {
+        backgroundColor: mode === "light" ? "#FFFAFA" : "#121212",
+        elevation: 0,
+        shadowOpacity: 0,
+      },
+      headerTintColor: mode === "light" ? "#000000" : "#ffffff", // Text color
+    });
+  }, [navigation, mode]);
+
   let progress = getProgress();
 
   function getProgress() {
@@ -109,7 +121,6 @@ function AddUserScreen() {
   };
 
   const handleDateSelection = (day) => {
-    console.log(day);
     const updatedCleaningProgram = { ...cleaningprogram };
     if (updatedCleaningProgram[day.dateString]) {
       delete updatedCleaningProgram[day.dateString];
@@ -152,14 +163,17 @@ function AddUserScreen() {
         cleaningprogramArray
       );
 
-      console.log(response);
-
       if (response == 201) {
         showMessage({
           message: "User has been created successfully",
           type: "success",
           icon: () => (
-            <Ionicons name="ios-checkmark-circle" size={18} color="white" />
+            <Ionicons
+              name="checkmark-circle-outline"
+              size={18}
+              color="white"
+              style={styles.flash}
+            />
           ),
         });
         navigation.navigate("Profile");
@@ -167,13 +181,27 @@ function AddUserScreen() {
         showMessage({
           message: "User already exist",
           type: "danger",
-          icon: () => <MaterialIcons name="error" size={18} color="white" />,
+          icon: () => (
+            <MaterialIcons
+              name="error"
+              size={18}
+              color="white"
+              style={styles.flash}
+            />
+          ),
         });
       } else {
         showMessage({
           message: "Error creating user, please try again later",
           type: "danger",
-          icon: () => <MaterialIcons name="error" size={18} color="white" />,
+          icon: () => (
+            <MaterialIcons
+              name="error"
+              size={18}
+              color="white"
+              style={styles.flash}
+            />
+          ),
         });
       }
     } catch (error) {}
@@ -218,7 +246,7 @@ function AddUserScreen() {
             },
           ]}
         >
-          <View style={styles.progressBarContainer}>
+          <View>
             <Progress.Bar
               progress={progress}
               width={220}
@@ -670,16 +698,9 @@ function AddUserScreen() {
                   maxDate={departure}
                   hideExtraDays={true}
                   onDayPress={(day) => handleDateSelection(day)}
-                  style={[
-                    styles.calendar,
-                    {
-                      backgroundColor:
-                        mode === "light" ? "transparent" : "#FFFAFA",
-                    },
-                  ]}
+                  style={[styles.calendar, { backgroundColor: "transparent" }]}
                   theme={{
-                    calendarBackground:
-                      mode === "light" ? "transparent" : "#FFFAFA",
+                    calendarBackground: "transparent",
                   }}
                   current={arrival}
                 />
@@ -788,5 +809,8 @@ const styles = StyleSheet.create({
   calendar: {
     borderRadius: 11,
     width: width / 1.3,
+  },
+  flash: {
+    marginRight: 2,
   },
 });

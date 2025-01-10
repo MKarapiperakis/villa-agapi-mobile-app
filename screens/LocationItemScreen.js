@@ -9,13 +9,27 @@ import {
 import React, { useEffect, useState, useContext } from "react";
 import i18n from "../translations/i18n";
 import { AuthContext } from "../store/auth-context";
+import { useNavigation } from "@react-navigation/native";
 
-function LocationItemScreen({ route, navigation }) {
+function LocationItem({ route, navigation }) {
   const { id, region, imageURL } = route.params;
 
 
   const [mode, setMode] = useState("");
   const authCtx = useContext(AuthContext);
+
+  const nav = useNavigation();
+
+  useEffect(() => {
+    nav.setOptions({
+      headerStyle: {
+        backgroundColor: mode === "light" ? "#FFFAFA" : "#121212",
+        elevation: 0,
+        shadowOpacity: 0,
+      },
+      headerTintColor: mode === "light" ? "#000000" : "#ffffff", // Text color
+    });
+  }, [nav, mode]);
 
   useEffect(() => {
     setMode(authCtx.currentMode);
@@ -47,7 +61,7 @@ function LocationItemScreen({ route, navigation }) {
   );
 }
 
-export default LocationItemScreen;
+export default LocationItem;
 const width = Dimensions.get("window").width;
 const styles = StyleSheet.create({
   container: {

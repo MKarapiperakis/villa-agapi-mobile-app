@@ -22,7 +22,7 @@ export function getYearFromDate(dateString) {
 
 export function getDayFromDate(dateString) {
   const date = new Date(dateString);
-  return date.getDay();
+  return date.getDate();
 }
 
 export function calculateDays(arrival, departure, month) {
@@ -63,7 +63,7 @@ export function getCountriesByYear(users) {
   const yearlyCountryCounts = {};
 
   users.forEach((user) => {
-    if (user.role === "visitor") {
+    if (user.role === "visitor" || user.role === "primeVisitor") {
       const arrivalYear = getYearFromDate(user.arrival);
 
       if (!yearlyCountryCounts[arrivalYear]) {
@@ -87,7 +87,7 @@ export function getDevicesByYear(users) {
   const yearlyDeviceCounts = {};
 
   users.forEach((user) => {
-    if (user.role === "visitor") {
+    if (user.role === "visitor" || user.role === "primeVisitor") {
       const arrivalYear = getYearFromDate(user.arrival);
 
       if (!yearlyDeviceCounts[arrivalYear]) {

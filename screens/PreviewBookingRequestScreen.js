@@ -12,6 +12,8 @@ import {
 import { AuthContext } from "../store/auth-context";
 import { Input, Button } from "react-native-elements";
 import i18n from "../translations/i18n";
+import { useNavigation } from "@react-navigation/native";
+
 function PreviewBookingRequestScreen({ route, navigation }) {
   const { request } = route.params;
   const authCtx = useContext(AuthContext);
@@ -24,6 +26,7 @@ function PreviewBookingRequestScreen({ route, navigation }) {
   const [requestDate, setRequestDate] = useState(request.request_date);
   const [infoMessage, setInfoMessage] = useState(request.info_message);
   const [locale, setLocale] = useState(authCtx.currentLocale.toLowerCase());
+  const nav = useNavigation();
   useEffect(() => {
     setLocale(authCtx.currentLocale.toLowerCase());
   }, [authCtx.currentLocale]);
@@ -32,6 +35,17 @@ function PreviewBookingRequestScreen({ route, navigation }) {
   useEffect(() => {
     setMode(authCtx.currentMode);
   }, [authCtx.currentMode]);
+
+  useEffect(() => {
+    nav.setOptions({
+      headerStyle: {
+        backgroundColor: mode === "light" ? "#FFFAFA" : "#121212",
+        elevation: 0,
+        shadowOpacity: 0,
+      },
+      headerTintColor: mode === "light" ? "#000000" : "#ffffff", // Text color
+    });
+  }, [nav, mode]);
 
   return (
     <KeyboardAvoidingView

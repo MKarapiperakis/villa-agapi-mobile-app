@@ -34,7 +34,7 @@ import * as Clipboard from "expo-clipboard";
 
 function Home3DScreen() {
   const { height } = Dimensions.get("window");
-  
+  const [role, setRole] = useState("");
   const width = Dimensions.get("window").width;
   const authCtx = useContext(AuthContext);
   const [mode, setMode] = useState("");
@@ -71,6 +71,10 @@ function Home3DScreen() {
     require(`../assets/images/home/19.png`),
     require(`../assets/images/home/20.png`),
   ]);
+
+  useEffect(() => {
+    setRole(authCtx.role);
+  }, [authCtx.role]);
 
   const data = [
     {
@@ -155,6 +159,17 @@ function Home3DScreen() {
     },
   ];
 
+  useEffect(() => {
+    navigation.setOptions({
+      headerStyle: {
+        backgroundColor: mode === "light" ? "#FFFAFA" : "#121212",
+        elevation: 0,
+        shadowOpacity: 0,
+      },
+      headerTintColor: mode === "light" ? "#000000" : "#ffffff", // Text color
+    });
+  }, [navigation, mode]);
+
   const [totalPages, setTotalPages] = useState(data.length);
 
   const Image2D = require(`../assets/images/home/2d.png`);
@@ -225,7 +240,7 @@ function Home3DScreen() {
         useNativeDriver: true,
       }),
     ]).start(() => {
-      navigation.navigate("chat");
+      navigation.navigate("Chat");
     });
   };
 
@@ -249,7 +264,7 @@ function Home3DScreen() {
           message: "Your report has been submited!",
           type: "success",
           icon: (props) => (
-            <Ionicons name="ios-checkmark-circle" size={18} color="white" />
+            <Ionicons name="checkmark-circle-outline" size={18} color="white" style={styles.flash}/>
           ),
         });
       } else {
@@ -258,7 +273,7 @@ function Home3DScreen() {
             "There was an error trying to submit your report, please try again later!",
           type: "danger",
           icon: (props) => (
-            <MaterialIcons name="error" size={18} color="white" />
+            <MaterialIcons name="error" size={18} color="white" style={styles.flash}/>
           ),
         });
       }
@@ -277,7 +292,7 @@ function Home3DScreen() {
         <View style={styles.detailsContent}>
           {item.content.map((contentItem, index) => (
             <View key={index} style={styles.contentItemContainer}>
-              <Ionicons name="ios-checkmark-circle" size={18} color="white" />
+              <Ionicons name="checkmark-done-outline" size={18} color="white"  />
               <Text style={styles.contentItem}>{contentItem}</Text>
             </View>
           ))}
@@ -325,7 +340,7 @@ function Home3DScreen() {
           },
         ]}
       >
-        {isCircleVisible && (
+        {isCircleVisible && role === 'primeVisitor' && (
           <TouchableOpacity style={styles.circle} onPress={handlePress}>
             <Animated.Image
               source={require("../assets/avatar.jpg")}
@@ -336,24 +351,27 @@ function Home3DScreen() {
             />
           </TouchableOpacity>
         )}
-        <TouchableOpacity
-          style={styles.toggleButton}
-          onPress={toggleCircleVisibility}
-        >
-          <Animated.View
-            style={{
-              transform: [{ scale: arrowBounceValue }],
-            }}
-          >
-            <Ionicons
-              name={
-                isCircleVisible ? "caret-forward-outline" : "caret-back-outline"
-              }
-              size={23}
-              color="#2979FF"
-            />
-          </Animated.View>
-        </TouchableOpacity>
+        {role === 'primeVisitor' && (
+           <TouchableOpacity
+           style={styles.toggleButton}
+           onPress={toggleCircleVisibility}
+         >
+           <Animated.View
+             style={{
+               transform: [{ scale: arrowBounceValue }],
+             }}
+           >
+             <Ionicons
+               name={
+                 isCircleVisible ? "caret-forward-outline" : "caret-back-outline"
+               }
+               size={23}
+               color="#2979FF"
+             />
+           </Animated.View>
+         </TouchableOpacity>
+        )}
+       
 
         <ScrollView showsVerticalScrollIndicator={false}>
           <View
@@ -402,7 +420,7 @@ function Home3DScreen() {
             {is2D && floor === 1 && (
               <Image
                 source={Image2D}
-                style={{ width: width / 1, height: width > 600 ? width /1.6 : height / 3.5}}
+                style={{ width: width / 1, height: width > 600 ? width /1.6 : height / 3.3}}
               />
             )}
 
@@ -623,6 +641,7 @@ function Home3DScreen() {
                     ]}
                     editable={false}
                     value="villa-agapi@otenet.gr"
+                    pointerEvents="none"
                   />
                 </TouchableOpacity>
               </View>
@@ -653,6 +672,7 @@ function Home3DScreen() {
                     ]}
                     editable={false}
                     value="(+30) 6944247486       "
+                    pointerEvents="none"
                   />
                 </TouchableOpacity>
               </View>
@@ -683,6 +703,7 @@ function Home3DScreen() {
                     ]}
                     editable={false}
                     value="(+30) 6945773737        "
+                    pointerEvents="none"
                   />
                 </TouchableOpacity>
               </View>
@@ -705,14 +726,14 @@ const styles = StyleSheet.create({
   },
   label: {
     fontFamily: "poppins",
-    fontSize: 23,
+    fontSize: 21,
 
     padding: 0,
     margin: 10,
   },
   label2: {
     fontFamily: "poppins",
-    fontSize: 23,
+    fontSize: 21,
     padding: 0,
     margin: 10,
   },
@@ -723,7 +744,7 @@ const styles = StyleSheet.create({
   },
   dimension: {
     fontFamily: "poppins",
-    fontSize: 23,
+    fontSize: 21,
     marginHorizontal: 10,
     paddingVertical: 5,
   },
@@ -744,7 +765,7 @@ const styles = StyleSheet.create({
     marginTop: 25,
   },
   detailContainer: {
-    flexDirection: "column", // Change this line
+    flexDirection: "column", 
     justifyContent: "space-between",
     alignItems: "center",
     borderRadius: 20,
@@ -759,7 +780,24 @@ const styles = StyleSheet.create({
     elevation: 5,
     backgroundColor: "white",
     padding: 25,
-    margin: 10,
+    marginBottom: 10,
+  },
+  contactContainer: {
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    backgroundColor: "white",
+    marginBottom: 10,
+    padding: 25,
   },
   formInputs: {
     borderColor: "#D3D3D3",
@@ -803,7 +841,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    fontSize: 23,
+    fontSize: 21,
     padding: 3,
   },
   contentItemContainer: {
@@ -891,23 +929,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-  contactContainer: {
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 20,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-    backgroundColor: "white",
-    padding: 25,
-    margin: 10,
-  },
+  flash: {
+    marginRight: 2
+  }
 });
 
 export default Home3DScreen;

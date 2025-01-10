@@ -1,21 +1,45 @@
 import React, { useState, useEffect, useContext } from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, SafeAreaView, Keyboard } from "react-native";
+import { StyleSheet, SafeAreaView, Keyboard, Platform } from "react-native";
 import { GiftedChat } from "react-native-gifted-chat";
 import { showMessage } from "react-native-flash-message";
 import socket from "../util/socket";
 import { AuthContext } from "../store/auth-context";
-import { LinearGradient } from "expo-linear-gradient";
+import { useNavigation } from "@react-navigation/native";
+import * as NavigationBar from "expo-navigation-bar";
 
 const Chatscreen = ({ route }) => {
   const { userId, name, role } = route.params;
   const authContext = useContext(AuthContext);
-
+  const navigation = useNavigation();
   const [messages, setMessages] = useState([]);
   const [chatMessage, setChatMessage] = useState("");
   const [mode, setMode] = useState("");
   const [typing, setTyping] = useState(false);
   const authCtx = useContext(AuthContext);
+
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerStyle: {
+        backgroundColor: mode === "light" ? "#FFFAFA" : "#121212",
+        elevation: 0,
+        shadowOpacity: 0,
+      },
+      headerTintColor: mode === "light" ? "#000000" : "#ffffff", 
+    });
+  }, [navigation, mode]);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerStyle: {
+        backgroundColor: mode === "light" ? "#FFFAFA" : "#121212",
+        elevation: 0,
+        shadowOpacity: 0,
+      },
+      headerTintColor: mode === "light" ? "#000000" : "#ffffff", 
+    });
+  }, [navigation, mode]);
 
   useEffect(() => {
     setMode(authCtx.currentMode);

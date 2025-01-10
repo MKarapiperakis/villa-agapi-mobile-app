@@ -30,7 +30,6 @@ export async function EditUserUpdateRequest(
     body: JSON.stringify(data),
   };
 
-  console.log(data.cleaningprogram)
   try {
     const response = await fetch(url, requestOptions);
     const res = await response.json();

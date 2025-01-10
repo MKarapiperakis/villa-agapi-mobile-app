@@ -37,6 +37,18 @@ function AvailabilityScreen({ route }) {
     setLocale(authCtx.currentLocale.toLowerCase());
   }, [authCtx.currentLocale]);
 
+  
+  useEffect(() => {
+    navigation.setOptions({
+      headerStyle: {
+        backgroundColor: mode === "light" ? "#FFFAFA" : "#121212",
+        elevation: 0,
+        shadowOpacity: 0,
+      },
+      headerTintColor: mode === "light" ? "#000000" : "#ffffff", // Text color
+    });
+  }, [navigation, mode]);
+
   i18n.locale = locale;
 
   useEffect(() => {
@@ -93,7 +105,7 @@ function AvailabilityScreen({ route }) {
           message: "Availability has been updated successfully",
           type: "success",
           icon: () => (
-            <Ionicons name="ios-checkmark-circle" size={18} color="white" />
+            <Ionicons name="checkmark-circle-outline" size={18} color="white" style={styles.flash} />
           ),
         });
         navigation.navigate("Profile");
@@ -101,7 +113,7 @@ function AvailabilityScreen({ route }) {
         showMessage({
           message: "Error updating Availability, please try again later",
           type: "danger",
-          icon: () => <MaterialIcons name="error" size={18} color="white" />,
+          icon: () => <MaterialIcons name="error" size={18} color="white" style={styles.flash}/>,
         });
       }
     } catch (error) {}
@@ -148,11 +160,12 @@ function AvailabilityScreen({ route }) {
                 hideExtraDays={true}
                 style={[
                   styles.calendar,
-                  { backgroundColor: mode === "light" ? "transparent" : "#FFFAFA" },
+                  { backgroundColor: "transparent" },
                 ]}
                 theme={{
-                  calendarBackground: mode === "light" ? "transparent" : "#FFFAFA",
+                  calendarBackground: "transparent",
                 }}
+                
                 markedDates={markedDatesObject}
               />
               <View style={styles.row}>
@@ -307,4 +320,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     padding: 5,
   },
+  flash: {
+    marginRight: 2
+  }
 });

@@ -14,7 +14,7 @@ import { useContext, useEffect, useState } from "react";
 
 import { getInsideSources } from "../constants/ImageSources";
 import ModalButton from "./ui/ModalButton";
-import ImageZoom from "react-native-image-pan-zoom";
+
 
 const insideImageSources = getInsideSources();
 

@@ -2,15 +2,40 @@ import React, { useState, useContext, useEffect, useLayoutEffect } from "react";
 import { Dimensions, View, StyleSheet, Image, FlatList } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { AuthContext } from "../store/auth-context";
-import LoadingOverlay from "../components/ui/LoadingOverlay";
+// import LoadingOverlay from "../components/ui/LoadingOverlay.js";
 import Category from "../models/category";
 import CategoryGridTile from "../components/CategoryGridTile";
 import {
   getNightImageSources,
   getDayImageSources,
 } from "../constants/ImageSources";
+import { useNavigation } from "@react-navigation/native";
+
 
 function HomeScreen({ route, navigation }) {
+  const nav = useNavigation();
+  let authCtx = useContext(AuthContext);
+  const width = Dimensions.get("window").width;
+  const [imageLoop, setImageLoop] = useState(true);
+  const [imagePlay, setImagePlay] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [mode, setMode] = useState("");
+  
+  useEffect(() => {
+    setMode(authCtx.currentMode);
+  }, [authCtx.currentMode]);
+
+  useEffect(() => {
+    nav.setOptions({
+      headerStyle: {
+        backgroundColor: mode === "light" ? "#FFFAFA" : "#121212",
+        elevation: 0,
+        shadowOpacity: 0,
+      },
+      headerTintColor: mode === "light" ? "#000000" : "#ffffff", // Text color
+    });
+  }, [nav, mode]);
+
   function renderCategoryItem(itemData) {
     function pressHandler() {
       navigation.navigate(itemData.item.title, {
@@ -28,11 +53,7 @@ function HomeScreen({ route, navigation }) {
     );
   }
 
-  const width = Dimensions.get("window").width;
-  const [imageLoop, setImageLoop] = useState(true);
-  const [imagePlay, setImagePlay] = useState(true);
-  const [loading, setLoading] = useState(true);
-  const [mode, setMode] = useState("");
+  
 
   const CATEGORIES = [
     new Category("0", "Inside", "#f5428d"),
@@ -45,14 +66,12 @@ function HomeScreen({ route, navigation }) {
 
   const nightImageSources = getNightImageSources();
 
-  let authCtx = useContext(AuthContext);
-
-  useEffect(() => {
-    setMode(authCtx.currentMode);
-  }, [authCtx.currentMode]);
-
   return (
-    <View style={{ flex: 1 }}>
+    <View
+      style={[
+        { flex: 1, backgroundColor: mode === "light" ? "#FFFAFA" : "#121212" },
+      ]}
+    >
       {/* {loading && (
         <View style={styles.loading}>
           <LoadingOverlay
@@ -66,6 +85,7 @@ function HomeScreen({ route, navigation }) {
         width={width}
         height={width / 2}
         autoPlay={imagePlay}
+        backgroundColor={mode === "light" ? "#FFFAFA" : "#121212"}
         data={[...new Array(6).keys()]}
         scrollAnimationDuration={5000}
         // onSnapToItem={(index) => console.log("current index:", index)}
@@ -73,7 +93,7 @@ function HomeScreen({ route, navigation }) {
           <View
             style={{
               flex: 1,
-              borderWidth: 1,
+              borderWidth: 0,
               justifyContent: "center",
             }}
           >
@@ -94,7 +114,7 @@ function HomeScreen({ route, navigation }) {
 
       <View
         style={{
-          flex: 1,
+          flex: 2,
           backgroundColor: mode === "light" ? "#FFFAFA" : "#121212",
         }}
       >

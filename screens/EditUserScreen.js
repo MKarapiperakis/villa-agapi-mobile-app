@@ -22,6 +22,7 @@ import { Calendar } from "react-native-calendars";
 import { getMinDate, getMaxDate } from "../util/dates";
 import { EditUserUpdateRequest } from "../api/EditUserUpdateRequest";
 import { showMessage, hideMessage } from "react-native-flash-message";
+import { useNavigation } from "@react-navigation/native";
 
 function EditUserScreen({ route, navigation }) {
   const { user } = route.params;
@@ -52,6 +53,18 @@ function EditUserScreen({ route, navigation }) {
   }, [authCtx.currentLocale]);
 
   i18n.locale = locale;
+
+  const nav = useNavigation();
+  useEffect(() => {
+    nav.setOptions({
+      headerStyle: {
+        backgroundColor: mode === "light" ? "#FFFAFA" : "#121212",
+        elevation: 0,
+        shadowOpacity: 0,
+      },
+      headerTintColor: mode === "light" ? "#000000" : "#ffffff", // Text color
+    });
+  }, [nav, mode]);
 
   useEffect(() => {
     setMode(authCtx.currentMode);
@@ -136,14 +149,14 @@ function EditUserScreen({ route, navigation }) {
           message: "User has been updated successfully",
           type: "success",
           icon: () => (
-            <Ionicons name="ios-checkmark-circle" size={18} color="white" />
+            <Ionicons name="checkmark-circle-outline" size={18} color="white" style={styles.flash} />
           ),
         });
       } else {
         showMessage({
           message: "Error updating user information, please try again later",
           type: "danger",
-          icon: () => <MaterialIcons name="error" size={18} color="white" />,
+          icon: () => <MaterialIcons name="error" size={18} color="white" style={styles.flash}/>,
         });
       }
     } catch (error) {}
@@ -527,4 +540,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     padding: 5,
   },
+  flash: {
+    marginRight: 2
+  }
 });

@@ -5,12 +5,25 @@ import { AuthContext } from "../store/auth-context";
 import Locale from "../components/ui/Locale";
 import i18n from "../translations/i18n";
 import DarkLightModeToggle from "../components/ui/DarkLightModeToggle";
+import { useNavigation } from "@react-navigation/native";
 
 function SettingsScreen() {
+  const nav = useNavigation();
   const authCtx = useContext(AuthContext);
-  const [mode, setMode] = useState("#121212");
+  const [mode, setMode] = useState("#FFFAFA");
   const [locale, setLocale] = useState("");
-  const [currentMode, setCurrentMode] = useState("dark");
+  const [currentMode, setCurrentMode] = useState("light");
+
+  useEffect(() => {
+    nav.setOptions({
+      headerStyle: {
+        backgroundColor: currentMode === "light" ? "#FFFAFA" : "#121212",
+        elevation: 0,
+        shadowOpacity: 0,
+      },
+      headerTintColor: currentMode === "light" ? "#000000" : "#ffffff", // Text color
+    });
+  }, [nav, currentMode]);
 
   const handleFlagChange = (flag) => {
     authCtx.changeLocale(flag);

@@ -18,7 +18,7 @@ import { AuthContext } from "../store/auth-context";
 import { GetUsersRequest } from "../api/GetUsersRequest";
 import i18n from "../translations/i18n";
 import { Image } from "expo-image";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import {
   calculateDuration,
@@ -48,6 +48,18 @@ function ChartsScreen() {
   const [allYears, setAllYears] = useState(false);
   const [isEnabled, setIsEnabled] = useState(false);
   const [isEnabled2, setIsEnabled2] = useState(false);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerStyle: {
+        backgroundColor: mode === "light" ? "#FFFAFA" : "#121212",
+        elevation: 0,
+        shadowOpacity: 0,
+      },
+      headerTintColor: mode === "light" ? "#000000" : "#ffffff", // Text color
+    });
+  }, [navigation, mode]);
 
   useEffect(() => {
     setLocale(authCtx.currentLocale.toLowerCase());
@@ -123,16 +135,16 @@ function ChartsScreen() {
 
         //pie chart data
         const androidCount = response.users.filter(
-          (user) => user.device === "android" && user.role === "visitor"
+          (user) => user.device === "android" && (user.role === "visitor" || user.role == "primeVisitor")
         ).length;
         const iosCount = response.users.filter(
-          (user) => user.device === "ios" && user.role === "visitor"
+          (user) => user.device === "ios" && (user.role === "visitor" || user.role == "primeVisitor")
         ).length;
         const unknowCount = response.users.filter(
           (user) =>
             user.device != "ios" &&
             user.device != "android" &&
-            user.role === "visitor"
+            (user.role === "visitor" || user.role == "primeVisitor")
         ).length;
 
         const devices = [
@@ -224,7 +236,7 @@ function ChartsScreen() {
         const yearlyData = {};
 
         response.users.forEach((user) => {
-          if (user.role === "visitor") {
+          if (user.role === "visitor" || user.role == "primeVisitor") {
             const arrivalMonth = getMonthFromDate(user.arrival);
             const arrivalYear = getYearFromDate(user.arrival);
 
@@ -296,12 +308,12 @@ function ChartsScreen() {
       : [0, 0, 0, 0, 0, 0, 0];
 
   const countriesData = !allYears
-    ? countriesByYear.find((entry) => entry.year === selectedYear)?.countries ||
+    ? countriesByYear.find((entry) => entry.year == selectedYear)?.countries ||
       []
     : countries;
 
   const devicesData = !allDevices
-    ? devicesByYear.find((entry) => entry.year === selectedYear)?.devices || []
+    ? devicesByYear.find((entry) => entry.year == selectedYear)?.devices || []
     : devices;
 
   return (

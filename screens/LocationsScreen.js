@@ -22,7 +22,7 @@ import { useNavigation } from "@react-navigation/native";
 import ModalWindow from "../components/ui/ModalWindow";
 import i18n from "../translations/i18n";
 
-function LocationScreen() {
+function LocationsScreen() {
   const [currentRegion, setCurrentRegion] = useState("crete");
   const [mode, setMode] = useState("");
   const [selectedAction, setSelectedAction] = useState("list");
@@ -30,6 +30,18 @@ function LocationScreen() {
   const [locationPermissionInformation, requestPermission] =
     useForegroundPermissions();
   const navigation = useNavigation();
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerStyle: {
+        backgroundColor: mode === "light" ? "#FFFAFA" : "#121212",
+        elevation: 0,
+        shadowOpacity: 0,
+      },
+      headerTintColor: mode === "light" ? "#000000" : "#ffffff", // Text color
+    });
+  }, [navigation, mode]);
+
   const data = [
     { id: "1", image: require("../assets/images/categories/locations.jpg") },
     { id: "2", image: require("../assets/images/locations/koules.jpg") },
@@ -352,7 +364,7 @@ function LocationScreen() {
   );
 }
 
-export default LocationScreen;
+export default LocationsScreen;
 const width = Dimensions.get("window").width;
 const styles = StyleSheet.create({
   rootContainer: {
@@ -371,6 +383,7 @@ const styles = StyleSheet.create({
   selectedAction: {
     backgroundColor: "#E9DEDC",
     padding: 10,
+    borderRadius: 11
   },
   notSelectedAction: {
     padding: 10,

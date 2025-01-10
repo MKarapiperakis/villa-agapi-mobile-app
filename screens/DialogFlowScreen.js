@@ -6,13 +6,13 @@ import {
   View,
   Keyboard,
   SafeAreaView,
-  ImageBackground,
+  Platform
 } from "react-native";
 import { GiftedChat, Bubble } from "react-native-gifted-chat";
 import { dialogFlowRequest } from "../api/DialogFlowRequest";
 import { AuthContext } from "../store/auth-context";
 import { useNavigation } from "@react-navigation/native";
-import { LinearGradient } from "expo-linear-gradient";
+import * as NavigationBar from "expo-navigation-bar";
 
 function DialogFlowScreen() {
   const [messages, setMessages] = useState([]);
@@ -21,6 +21,19 @@ function DialogFlowScreen() {
   const [mode, setMode] = useState("");
   const authCtx = useContext(AuthContext);
   const navigation = useNavigation();
+
+
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerStyle: {
+        backgroundColor: mode === "light" ? "#FFFAFA" : "#121212",
+        elevation: 0,
+        shadowOpacity: 0,
+      },
+      headerTintColor: mode === "light" ? "#000000" : "#ffffff", // Text color
+    });
+  }, [navigation, mode]);
 
   useEffect(() => {
     sendWelcomeMessage();

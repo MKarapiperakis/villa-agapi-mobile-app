@@ -9,9 +9,10 @@ import {
   SafeAreaView,
   Dimensions,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 import i18n from "../translations/i18n";
-import { DataTable } from "react-native-paper";
+import { DataTable, ThemeProvider } from "react-native-paper";
 import { AuthContext } from "../store/auth-context";
 import { GetUsersRequest } from "../api/GetUsersRequest";
 import { availabilityRequest } from "../api/AvailabilityRequest";
@@ -315,7 +316,12 @@ function AdminComponent() {
           message: "Booking Request has been deleted successfully",
           type: "success",
           icon: (props) => (
-            <Ionicons name="ios-checkmark-circle" size={18} color="white" />
+            <Ionicons
+              name="checkmark-circle-outline"
+              size={18}
+              color="white"
+              style={styles.flash}
+            />
           ),
         });
       } else {
@@ -323,7 +329,12 @@ function AdminComponent() {
           message: "Error deleting booking request, please try again later",
           type: "danger",
           icon: (props) => (
-            <MaterialIcons name="error" size={18} color="white" />
+            <MaterialIcons
+              name="error"
+              size={18}
+              color="white"
+              style={styles.flash}
+            />
           ),
         });
       }
@@ -341,7 +352,12 @@ function AdminComponent() {
           message: "Marker has been deleted successfully",
           type: "success",
           icon: (props) => (
-            <Ionicons name="ios-checkmark-circle" size={18} color="white" />
+            <Ionicons
+              name="checkmark-circle-outline"
+              size={18}
+              color="white"
+              style={styles.flash}
+            />
           ),
         });
       } else {
@@ -349,7 +365,12 @@ function AdminComponent() {
           message: "Error deleting marker, please try again later",
           type: "danger",
           icon: (props) => (
-            <MaterialIcons name="error" size={18} color="white" />
+            <MaterialIcons
+              name="error"
+              size={18}
+              color="white"
+              style={styles.flash}
+            />
           ),
         });
       }
@@ -377,11 +398,26 @@ function AdminComponent() {
             <ScrollView showsVerticalScrollIndicator={false}>
               <View></View>
               {/* USERS TABLE */}
-              <View>
+              <View
+                style={[
+                  styles.container2,
+                  { backgroundColor: mode === "light" ? "#FFFAFA" : "#352A2A" },
+                ]}
+              >
                 <DataTable
-                  style={[styles.table, { backgroundColor: "#FFFAFA" }]}
+                  style={[
+                    styles.table,
+                    {
+                      backgroundColor: mode === "light" ? "#FFFAFA" : "#352A2A",
+                    },
+                  ]}
                 >
-                  <Text style={[styles.title]}>
+                  <Text
+                    style={[
+                      styles.title,
+                      { color: mode === "light" ? "#121212" : "#FFFAFA" },
+                    ]}
+                  >
                     {i18n.t("admin.users_table")}
                   </Text>
                   <Input
@@ -406,7 +442,7 @@ function AdminComponent() {
 
                         {filterInput.length == 0 && !filterPickerVisible && (
                           <Ionicons
-                            name="filter"
+                            name="caret-down-outline"
                             size={23}
                             color={"#3498db"}
                             onPress={() =>
@@ -417,7 +453,7 @@ function AdminComponent() {
 
                         {filterInput.length == 0 && filterPickerVisible && (
                           <Ionicons
-                            name="arrow-up"
+                            name="caret-up-outline"
                             size={23}
                             color={"#3498db"}
                             onPress={() =>
@@ -431,27 +467,72 @@ function AdminComponent() {
                     rightIconContainerStyle={[styles.rightIcon]}
                     onChangeText={handleFilterChange}
                     inputContainerStyle={styles.searchBar}
-                    style={styles.input}
+                    style={[
+                      styles.input,
+                      { color: mode === "light" ? "#121212" : "#FFFAFA" },
+                    ]}
                   />
                   {filterPickerVisible && filterInput.length == 0 && (
                     <Picker
-                      style={styles.picker}
+                      style={[
+                        styles.picker,
+                        { color: mode === "light" ? "black" : "white" },
+                      ]}
                       selectedValue={filterField}
                       onValueChange={(itemValue) => {
                         setFilterField(itemValue);
                       }}
-                      dropdownIconColor={"black"}
+                      selectionColor={
+                        'mode === "light" ? "#A9A0A01A" : "#000001A"'
+                      }
+                      dropdownIconColor={mode === "light" ? "black" : "white"}
                     >
-                      <Picker.Item label="Name" value="name" />
-                      <Picker.Item label="Country" value="country" />
-                      <Picker.Item label="Role" value="role" />
+                      <Picker.Item
+                        label="Name"
+                        value="name"
+                        color={
+                          mode === "light"
+                            ? "#121212"
+                            : Platform.OS === "android"
+                            ? "black"
+                            : Platform.OS === "ios"
+                            ? "white"
+                            : "#FFFAFA"
+                        }
+                      />
+                      <Picker.Item
+                        label="Country"
+                        value="country"
+                        color={
+                          mode === "light"
+                            ? "#121212"
+                            : Platform.OS === "android"
+                            ? "black"
+                            : Platform.OS === "ios"
+                            ? "white"
+                            : "#FFFAFA"
+                        }
+                      />
+                      <Picker.Item
+                        label="Role"
+                        value="role"
+                        color={
+                          mode === "light"
+                            ? "#121212"
+                            : Platform.OS === "android"
+                            ? "black"
+                            : Platform.OS === "ios"
+                            ? "white"
+                            : "#FFFAFA"
+                        }
+                      />
                     </Picker>
                   )}
                   <DataTable.Header backgroundColor="#4169E1">
                     <DataTable.Title
                       sortDirection={sortDirection}
                       textStyle={styles.header}
-                      theme={{ colors: { text: "white" } }}
+                      theme={{ colors: { text: "white", color: "white" } }}
                       onPress={() => {
                         setSortColumn("arrival");
                         setSortDirection(
@@ -482,27 +563,58 @@ function AdminComponent() {
                         Keyboard.dismiss();
                       }}
                     >
-                      <DataTable.Cell textStyle={styles.cell}>{`${
-                        getDayFromDate(user.arrival) + 1
-                      }/${getMonthFromDate(user.arrival) + 1}/${getYearFromDate(
-                        user.arrival
-                      )}`}</DataTable.Cell>
-                      <DataTable.Cell textStyle={styles.cell}>
+                      <DataTable.Cell
+                        textStyle={[
+                          styles.cell,
+                          { color: mode === "light" ? "#121212" : "#FFFAFA" },
+                        ]}
+                      >{`${getDayFromDate(user.arrival)}/${
+                        getMonthFromDate(user.arrival) + 1
+                      }/${getYearFromDate(user.arrival)}`}</DataTable.Cell>
+                      <DataTable.Cell
+                        textStyle={[
+                          styles.cell,
+                          { color: mode === "light" ? "#121212" : "#FFFAFA" },
+                        ]}
+                      >
+                        <Ionicons
+                          name="radio-button-on-outline"
+                          size={8}
+                          borderRadius="55"
+                          color={user.is_active ? "#4169E1" : "red"}
+                        />
                         {user.name}
                       </DataTable.Cell>
 
-                      <DataTable.Cell textStyle={styles.cell}>
+                      <DataTable.Cell
+                        textStyle={[
+                          styles.cell,
+                          { color: mode === "light" ? "#121212" : "#FFFAFA" },
+                        ]}
+                      >
                         {user.country.length > 0 ? user.country : "N/A"}
                       </DataTable.Cell>
 
-                      <DataTable.Cell textStyle={styles.cell}>
+                      <DataTable.Cell
+                        textStyle={[
+                          styles.cell,
+                          { color: mode === "light" ? "#121212" : "#FFFAFA" },
+                        ]}
+                      >
                         {user.role}
                       </DataTable.Cell>
                     </DataTable.Row>
                   ))}
                 </DataTable>
 
-                <View style={styles.footer}>
+                <View
+                  style={[
+                    styles.footer,
+                    {
+                      backgroundColor: mode === "light" ? "#FFFAFA" : "#352A2A",
+                    },
+                  ]}
+                >
                   <Button
                     buttonStyle={{ width: 150 }}
                     containerStyle={{ margin: 5 }}
@@ -526,26 +638,57 @@ function AdminComponent() {
                     titleStyle={{ marginHorizontal: 5 }}
                   />
                   <DataTable.Pagination
-                    style={styles.page}
+                    style={[
+                      styles.page,
+                      {
+                        backgroundColor:
+                          mode === "light" ? "#FFFAFA" : "#352A2A",
+                      },
+                    ]}
                     page={page}
                     numberOfPages={Math.ceil(
                       filteredUsers.length / itemsPerPage
                     )}
                     onPageChange={handlePageChange}
-                    label={`${page + 1} of ${Math.ceil(
-                      filteredUsers.length / itemsPerPage
-                    )}`}
+                    label={
+                      <Text
+                        style={{
+                          color: mode === "light" ? "#121212" : "#FFFAFA",
+                        }}
+                      >
+                        {page + 1} of{" "}
+                        {Math.ceil(filteredUsers.length / itemsPerPage)}
+                      </Text>
+                    }
                   />
                 </View>
               </View>
 
               {/* BOOKING REQUESTS */}
               {bookingRequests.length > 0 ? (
-                <View style={styles.requests}>
+                <View
+                  style={[
+                    styles.container2,
+                    {
+                      backgroundColor: mode === "light" ? "#FFFAFA" : "#352A2A",
+                    },
+                  ]}
+                >
                   <DataTable
-                    style={[styles.table, { backgroundColor: "#FFFAFA" }]}
+                    style={[
+                      styles.table,
+                      {
+                        backgroundColor:
+                          mode === "light" ? "#FFFAFA" : "#352A2A",
+                      },
+                    ]}
                   >
-                    <Text style={[styles.title]}>
+                    <Text
+                      style={[
+                        styles.title,
+                        { color: mode === "light" ? "#121212" : "#FFFAFA" },
+                      ]}
+                    >
                       {i18n.t("admin.booking_requests")}
                     </Text>
                     <DataTable.Header backgroundColor="#4169E1">
@@ -567,12 +710,20 @@ function AdminComponent() {
                           Keyboard.dismiss();
                         }}
                       >
-                        <DataTable.Cell textStyle={styles.cell}>
+                        <DataTable.Cell
+                          textStyle={[
+                            styles.cell,
+                            { color: mode === "light" ? "#121212" : "#FFFAFA" },
+                          ]}
+                        >
                           {request.name}
                         </DataTable.Cell>
 
                         <DataTable.Cell
-                          textStyle={styles.cell}
+                          textStyle={[
+                            styles.cell,
+                            { color: mode === "light" ? "#121212" : "#FFFAFA" },
+                          ]}
                           style={styles.cell}
                         >
                           {request.request_date}
@@ -607,7 +758,15 @@ function AdminComponent() {
                   </DataTable>
 
                   <View>
-                    <View style={styles.footer2}>
+                    <View
+                      style={[
+                        styles.footer2,
+                        {
+                          backgroundColor:
+                            mode === "light" ? "#FFFAFA" : "#352A2A",
+                        },
+                      ]}
+                    >
                       <DataTable.Pagination
                         style={styles.pageBookingRequest}
                         page={pageBookingRequest}
@@ -615,9 +774,20 @@ function AdminComponent() {
                           bookingRequests.length / itemsPerPage
                         )}
                         onPageChange={handlePageChange2}
-                        label={`${pageBookingRequest + 1} of ${Math.ceil(
-                          bookingRequests.length / itemsPerPage
-                        )}`}
+                        // label={`${pageBookingRequest + 1} of ${Math.ceil(
+                        //   bookingRequests.length / itemsPerPage
+                        // )}`}
+
+                        label={
+                          <Text
+                            style={{
+                              color: mode === "light" ? "#121212" : "#FFFAFA",
+                            }}
+                          >
+                            {pageBookingRequest + 1} of{" "}
+                            {Math.ceil(bookingRequests.length / itemsPerPage)}
+                          </Text>
+                        }
                       />
                     </View>
                   </View>
@@ -660,11 +830,22 @@ function AdminComponent() {
                   </Text>
                 </View>
               )}
-
               {/* AVAILABILITY */}
               {disabledDates.length > 0 ? (
-                <View style={styles.availability}>
-                  <Text style={[styles.title]}>
+                <View
+                  style={[
+                    styles.availability,
+                    {
+                      backgroundColor: mode === "light" ? "#FFFAFA" : "#352A2A",
+                    },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.title,
+                      { color: mode === "light" ? "#121212" : "#FFFAFA" },
+                    ]}
+                  >
                     {i18n.t("admin.availability")}
                   </Text>
                   <Calendar
@@ -775,31 +956,186 @@ function AdminComponent() {
               )}
 
               {/* MARKERS */}
-              <View style={styles.markers}>
-                <Text style={styles.title}>{i18n.t("admin.locations")}</Text>
+              <View
+                style={[
+                  styles.markers,
+                  { backgroundColor: mode === "light" ? "#FFFAFA" : "#352A2A" },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.title,
+                    { color: mode === "light" ? "#121212" : "#FFFAFA" },
+                  ]}
+                >
+                  {i18n.t("admin.locations")}
+                </Text>
 
                 <DataTable
-                  style={[styles.table, { backgroundColor: "#FFFAFA" }]}
+                  style={[
+                    styles.table,
+                    {
+                      backgroundColor: mode === "light" ? "#FFFAFA" : "#352A2A",
+                    },
+                  ]}
                 >
                   <Picker
-                    style={styles.picker}
-                    dropdownIconColor={"black"}
+                    style={[
+                      styles.picker,
+                      { color: mode === "light" ? "black" : "white" },
+                    ]}
+                    dropdownIconColor={mode === "light" ? "black" : "white"}
+                    selectionColor={
+                      'mode === "light" ? "#A9A0A01A" : "#000001A"'
+                    }
                     selectedValue={filterMarkerInput}
                     onValueChange={(itemValue) => {
                       setFilterMarkerInput(itemValue);
                     }}
                   >
-                    <Picker.Item label="All" value="" />
-                    <Picker.Item label="Food" value="food" />
-                    <Picker.Item label="Bank" value="bank" />
-                    <Picker.Item label="Drink" value="drink" />
-                    <Picker.Item label="Beach" value="beach" />
-                    <Picker.Item label="Market" value="market" />
-                    <Picker.Item label="Health" value="health" />
-                    <Picker.Item label="Fast Food" value="fastFood" />
-                    <Picker.Item label="Activities" value="activities" />
-                    <Picker.Item label="Monuments" value="monuments" />
-                    <Picker.Item label="Gas Station" value="gas_station" />
+                    <Picker.Item
+                      label="All"
+                      value=""
+                      color={
+                        mode === "light"
+                          ? "#121212"
+                          : Platform.OS === "android"
+                          ? "black"
+                          : Platform.OS === "ios"
+                          ? "white"
+                          : "#FFFAFA"
+                      }
+                    />
+                    <Picker.Item
+                      label="Food"
+                      value="food"
+                      color={
+                        mode === "light"
+                          ? "#121212"
+                          : Platform.OS === "android"
+                          ? "black"
+                          : Platform.OS === "ios"
+                          ? "white"
+                          : "#FFFAFA"
+                      }
+                    />
+                    <Picker.Item
+                      label="Bank"
+                      value="bank"
+                      color={
+                        mode === "light"
+                          ? "#121212"
+                          : Platform.OS === "android"
+                          ? "black"
+                          : Platform.OS === "ios"
+                          ? "white"
+                          : "#FFFAFA"
+                      }
+                    />
+                    <Picker.Item
+                      label="Drink"
+                      value="drink"
+                      color={
+                        mode === "light"
+                          ? "#121212"
+                          : Platform.OS === "android"
+                          ? "black"
+                          : Platform.OS === "ios"
+                          ? "white"
+                          : "#FFFAFA"
+                      }
+                    />
+                    <Picker.Item
+                      label="Beach"
+                      value="beach"
+                      color={
+                        mode === "light"
+                          ? "#121212"
+                          : Platform.OS === "android"
+                          ? "black"
+                          : Platform.OS === "ios"
+                          ? "white"
+                          : "#FFFAFA"
+                      }
+                    />
+                    <Picker.Item
+                      label="Market"
+                      value="market"
+                      color={
+                        mode === "light"
+                          ? "#121212"
+                          : Platform.OS === "android"
+                          ? "black"
+                          : Platform.OS === "ios"
+                          ? "white"
+                          : "#FFFAFA"
+                      }
+                    />
+                    <Picker.Item
+                      label="Health"
+                      value="health"
+                      color={
+                        mode === "light"
+                          ? "#121212"
+                          : Platform.OS === "android"
+                          ? "black"
+                          : Platform.OS === "ios"
+                          ? "white"
+                          : "#FFFAFA"
+                      }
+                    />
+                    <Picker.Item
+                      label="Fast Food"
+                      value="fastFood"
+                      color={
+                        mode === "light"
+                          ? "#121212"
+                          : Platform.OS === "android"
+                          ? "black"
+                          : Platform.OS === "ios"
+                          ? "white"
+                          : "#FFFAFA"
+                      }
+                    />
+                    <Picker.Item
+                      label="Activities"
+                      value="activities"
+                      color={
+                        mode === "light"
+                          ? "#121212"
+                          : Platform.OS === "android"
+                          ? "black"
+                          : Platform.OS === "ios"
+                          ? "white"
+                          : "#FFFAFA"
+                      }
+                    />
+                    <Picker.Item
+                      label="Monuments"
+                      value="monuments"
+                      color={
+                        mode === "light"
+                          ? "#121212"
+                          : Platform.OS === "android"
+                          ? "black"
+                          : Platform.OS === "ios"
+                          ? "white"
+                          : "#FFFAFA"
+                      }
+                    />
+                    <Picker.Item
+                      label="Gas Station"
+                      value="gas_station"
+                      color={
+                        mode === "light"
+                          ? "#121212"
+                          : Platform.OS === "android"
+                          ? "black"
+                          : Platform.OS === "ios"
+                          ? "white"
+                          : "#FFFAFA"
+                      }
+                    />
                   </Picker>
 
                   <DataTable.Header backgroundColor="#4169E1">
@@ -813,11 +1149,21 @@ function AdminComponent() {
                   </DataTable.Header>
                   {paginatedMarkers.map((marker) => (
                     <DataTable.Row key={marker.id}>
-                      <DataTable.Cell textStyle={styles.cell}>
+                      <DataTable.Cell
+                        textStyle={[
+                          styles.cell,
+                          { color: mode === "light" ? "#121212" : "#FFFAFA" },
+                        ]}
+                      >
                         {marker.title}
                       </DataTable.Cell>
 
-                      <DataTable.Cell textStyle={styles.cell}>
+                      <DataTable.Cell
+                        textStyle={[
+                          styles.cell,
+                          { color: mode === "light" ? "#121212" : "#FFFAFA" },
+                        ]}
+                      >
                         {marker.type}
                       </DataTable.Cell>
                       <DataTable.Cell
@@ -847,7 +1193,14 @@ function AdminComponent() {
                     </DataTable.Row>
                   ))}
                 </DataTable>
-                <View style={styles.footer}>
+                <View
+                  style={[
+                    styles.footer,
+                    {
+                      backgroundColor: mode === "light" ? "#FFFAFA" : "#352A2A",
+                    },
+                  ]}
+                >
                   <Button
                     buttonStyle={{ width: 140 }}
                     containerStyle={{ margin: 5 }}
@@ -875,7 +1228,13 @@ function AdminComponent() {
                     titleStyle={{ marginHorizontal: 5 }}
                   />
                   <DataTable.Pagination
-                    style={styles.page}
+                    style={[
+                      styles.page,
+                      {
+                        backgroundColor:
+                          mode === "light" ? "#FFFAFA" : "#352A2A",
+                      },
+                    ]}
                     page={pageMarker}
                     numberOfPages={Math.ceil(
                       filteredMarkers.length > 0
@@ -883,71 +1242,159 @@ function AdminComponent() {
                         : pins.length / itemsPerPage
                     )}
                     onPageChange={handlePageChange3}
-                    label={`${pageMarker + 1} of ${Math.ceil(
-                      filteredMarkers.length > 0
-                        ? filteredMarkers.length / itemsPerPage
-                        : pins.length / itemsPerPage
-                    )}`}
+                    // label={`${pageMarker + 1} of ${Math.ceil(
+                    //   filteredMarkers.length > 0
+                    //     ? filteredMarkers.length / itemsPerPage
+                    //     : pins.length / itemsPerPage
+                    // )}`}
+
+                    label={
+                      <Text
+                        style={{
+                          color: mode === "light" ? "#121212" : "#FFFAFA",
+                        }}
+                      >
+                        {pageMarker + 1} of{" "}
+                        {Math.ceil(
+                          filteredMarkers.length > 0
+                            ? filteredMarkers.length / itemsPerPage
+                            : pins.length / itemsPerPage
+                        )}
+                      </Text>
+                    }
                   />
                 </View>
+                {Platform.OS === "android" && (
+                  <MapV
+                    initialRegion={INITIAL_REGION}
+                    style={styles.map}
+                    //provider={Platform.OS === "android" ? "google" : ""}
+                    provider="google"
+                    showsCompass={true}
+                    showsTraffic={true}
+                    showsBuildings={false}
+                    showsIndoors={true}
+                    zoomControlEnabled={false}
+                    minZoomLevel={0}
+                    maxZoomLevel={20}
+                    rotateEnabled={true}
+                    scrollEnabled={true}
+                    loadingEnabled={true}
+                  >
+                    {filteredMarkers.length > 0
+                      ? filteredMarkers.map((marker) => (
+                          <Marker
+                            key={marker.id}
+                            tracksViewChanges={false}
+                            coordinate={{
+                              latitude: marker.latitude,
+                              longitude: marker.longitude,
+                            }}
+                            title={marker.title}
+                          >
+                            <Ionicons
+                              name={marker.icon}
+                              size={31}
+                              color="#4169E1"
+                            />
+                            <Callout
+                              // onPress={() => handleMarkerPress(marker.id)}
+                              style={styles.markerPin}
+                            >
+                              <Text style={styles.pinText}>{marker.title}</Text>
+                            </Callout>
+                          </Marker>
+                        ))
+                      : pins.map((pin) => (
+                          <Marker
+                            key={pin.id}
+                            tracksViewChanges={false}
+                            coordinate={{
+                              latitude: pin.latitude,
+                              longitude: pin.longitude,
+                            }}
+                            title={pin.title}
+                          >
+                            <Ionicons
+                              name={pin.icon}
+                              size={31}
+                              color="#4169E1"
+                            />
+                            <Callout
+                              // onPress={() => handleMarkerPress(pin.id)}
+                              style={styles.markerPin}
+                            >
+                              <Text style={styles.pinText}>{pin.title}</Text>
+                            </Callout>
+                          </Marker>
+                        ))}
+                  </MapV>
+                )}
 
-                <MapV
-                  initialRegion={INITIAL_REGION}
-                  style={styles.map}
-                  provider="google"
-                  showsCompass={true}
-                  showsTraffic={true}
-                  showsBuildings={false}
-                  showsIndoors={true}
-                  zoomControlEnabled={false}
-                  minZoomLevel={0}
-                  maxZoomLevel={20}
-                  rotateEnabled={true}
-                  scrollEnabled={true}
-                  loadingEnabled={true}
-                >
-                  {filteredMarkers.length > 0
-                    ? filteredMarkers.map((marker) => (
-                        <Marker
-                          key={marker.id}
-                          coordinate={{
-                            latitude: marker.latitude,
-                            longitude: marker.longitude,
-                          }}
-                          title={marker.title}
-                        >
-                          <Ionicons
-                            name={marker.icon}
-                            size={31}
-                            color="#4169E1"
-                          />
-                          <Callout
-                            // onPress={() => handleMarkerPress(marker.id)}
-                            style={styles.markerPin}
+                {Platform.OS === "ios" && (
+                  <MapV
+                    initialRegion={INITIAL_REGION}
+                    style={styles.map}
+                    showsCompass={true}
+                    showsTraffic={true}
+                    showsBuildings={false}
+                    showsIndoors={true}
+                    zoomControlEnabled={false}
+                    minZoomLevel={0}
+                    maxZoomLevel={20}
+                    rotateEnabled={true}
+                    scrollEnabled={true}
+                    loadingEnabled={true}
+                  >
+                    {filteredMarkers.length > 0
+                      ? filteredMarkers.map((marker) => (
+                          <Marker
+                            key={marker.id}
+                            tracksViewChanges={false}
+                            coordinate={{
+                              latitude: marker.latitude,
+                              longitude: marker.longitude,
+                            }}
+                            title={marker.title}
                           >
-                            <Text style={styles.pinText}>{marker.title}</Text>
-                          </Callout>
-                        </Marker>
-                      ))
-                    : pins.map((pin) => (
-                        <Marker
-                          key={pin.id}
-                          coordinate={{
-                            latitude: pin.latitude,
-                            longitude: pin.longitude,
-                          }}
-                          title={pin.title}
-                        >
-                          <Ionicons name={pin.icon} size={31} color="#4169E1" />
-                          <Callout
-                            // onPress={() => handleMarkerPress(pin.id)}
-                            style={styles.markerPin}
+                            <Ionicons
+                              name={marker.icon}
+                              size={31}
+                              color="#4169E1"
+                            />
+                            <Callout
+                              // onPress={() => handleMarkerPress(marker.id)}
+                              style={styles.markerPin}
+                            >
+                              <Text style={styles.pinText}>{marker.title}</Text>
+                            </Callout>
+                          </Marker>
+                        ))
+                      : pins.map((pin) => (
+                          <Marker
+                            key={pin.id}
+                            tracksViewChanges={false}
+                            coordinate={{
+                              latitude: pin.latitude,
+                              longitude: pin.longitude,
+                            }}
+                            title={pin.title}
                           >
-                            <Text style={styles.pinText}>{pin.title}</Text>
-                          </Callout>
-                        </Marker>
-                      ))}
-                </MapV>
+                            <Ionicons
+                              name={pin.icon}
+                              size={31}
+                              color="#4169E1"
+                            />
+                            <Callout
+                              // onPress={() => handleMarkerPress(pin.id)}
+                              style={styles.markerPin}
+                            >
+                              <Text style={styles.pinText}>{pin.title}</Text>
+                            </Callout>
+                          </Marker>
+                        ))}
+                  </MapV>
+                )}
               </View>
             </ScrollView>
           </React.Fragment>
@@ -960,6 +1407,7 @@ function AdminComponent() {
 export default AdminComponent;
 
 const width = Dimensions.get("window").width;
+const height = Dimensions.get("window").height;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -1033,7 +1481,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
   },
   rightIcon: {
-    borderColor: "rgba(55, 55, 55, 0.40)",
+    borderColor: "gray",
     borderLeftWidth: 1,
     paddingHorizontal: 5,
   },
@@ -1053,7 +1501,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
     backgroundColor: "#FFFAFA",
-    margin: 15,
+    margin: 5,
+    marginBottom: 15,
   },
   calendar: {
     width: width / 1.3,
@@ -1078,7 +1527,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
     backgroundColor: "#FFFAFA",
-    margin: 15,
+    margin: 5,
+    marginBottom: 15,
   },
   markers: {
     flexDirection: "column", // This makes the children Views align horizontally.
@@ -1093,7 +1543,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
     backgroundColor: "#FFFAFA",
-    margin: 15,
+    margin: 5,
   },
   markerPin: {
     flex: 1,
@@ -1114,5 +1564,28 @@ const styles = StyleSheet.create({
 
   picker: {
     flex: 1,
+  },
+  container2: {
+    borderTopWidth: 0,
+    borderColor: "grey",
+    paddingVertical: 15,
+    justifyContent: "center",
+    borderRadius: 20,
+    paddingHorizontal: 0,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 2,
+    backgroundColor: "#FFFAFA",
+    margin: 5,
+    marginBottom: 15,
+  },
+  flash: {
+    marginRight: 2,
   },
 });
